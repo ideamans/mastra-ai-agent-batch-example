@@ -23,6 +23,9 @@ importers:
       '@mastra/mcp':
         specifier: ^0.3.10
         version: 0.3.10(react@19.1.0)
+      async-await-mutex-lock:
+        specifier: ^1.0.12
+        version: 1.0.12
       google-auth-library:
         specifier: ^9.15.1
         version: 9.15.1
@@ -1581,6 +1584,9 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  async-await-mutex-lock@1.0.12:
+    resolution: {integrity: sha512-zFq1Cxvk0OeU+dbrOFCLleOTNjG7g/PHKkQxzi6SfPR1vO1J3SC0rDoKf99TPb+nC5ezPirsZAff7qZVb+u8sA==}
 
   async@2.6.4:
     resolution: {integrity: sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==}
@@ -5295,6 +5301,8 @@ snapshots:
       color-convert: 2.0.1
 
   argparse@2.0.1: {}
+
+  async-await-mutex-lock@1.0.12: {}
 
   async@2.6.4:
     dependencies:
