@@ -4,11 +4,12 @@ import { webMcp } from '../tools/web'
 
 // サイト調査エージェント
 
-export const webMcpTools = await webMcp.getTools()
+export const webMcpTools = await webMcp.listTools()
 
 // 🛠️ 改造ポイント
 // 調査の内容に応じてinstructions(システムプロンプト)やmodelを変更する
 export const surveyAgent = new Agent({
+  id: 'surveyAgent',
   name: 'サイト調査エージェント',
   model: gemini20flash,
   instructions: `
@@ -37,10 +38,7 @@ export const surveyAgent = new Agent({
 
 以上で処理を終了する。
   `.trim(),
-  defaultGenerateOptions: {
-    maxSteps: 20,
-  },
-  defaultStreamOptions: {
+  defaultOptions: {
     maxSteps: 20,
   },
   tools: {
