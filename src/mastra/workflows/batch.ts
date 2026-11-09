@@ -1,4 +1,4 @@
-import { Workflow, Step } from '@mastra/core/workflows'
+import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
 import { Lock } from 'async-await-mutex-lock'
 
@@ -13,22 +13,27 @@ const documents = await useDocuments()
 const iterationLock = new Lock()
 
 // 残タスクの読み込みステップ
-export const loadBacklogStep = new Step({
+export const loadBacklogStep = createStep({
   id: 'load-backlog',
   description: '残タスクのドキュメントを読み込む',
+  inputSchema: z.object({}),
+  outputSchema: z.object({}),
   execute: async ({ mastra }) => {
     const { length, errors } = await documents.load()
     for (const error of errors) {
       mastra?.getLogger()?.error(`(Load Backlog Step): 💣 ドキュメント読み込みエラー: ${error}`)
     }
     mastra?.getLogger()?.info(`(Load Backlog Step): 🗒️ 調査対象: ${length}件`)
+    return {}
   },
 })
 
 // 残タスクを繰り返し取り出し、AIエージェントによる調査を行うステップ
-export const iterationStep = new Step({
+export const iterationStep = createStep({
   id: 'iteration',
   description: '残タスクの取り出しとAIエージェントによる調査を繰り返し行う',
+  inputSchema: z.object({}),
+  outputSchema: z.object({}),
   execute: async ({ mastra }) => {
     await iterationLock.acquire()
 
@@ -48,7 +53,7 @@ export const iterationStep = new Step({
       const rowKey = documents.iterateBacklogKey()
       if (!rowKey) {
         mastra?.getLogger()?.warn('(Iteration Step): ⚠️ 調査対象がありません')
-        return
+        return {}
       }
 
       // 並列処理では調査の重複がありえるので最新の情報を確認する
@@ -57,7 +62,7 @@ export const iterationStep = new Step({
         mastra
           ?.getLogger()
           ?.info(`(Iteration Step): ⏭️ #${rowKey} は他のプロセスによる調査が行われているためスキップします`)
-        return
+        return {}
       }
 
       mastra?.getLogger()?.info(`(Iteration Step): ▶️ 調査開始: #${rowKey} ${JSON.stringify(doc.data)}`)
@@ -129,11 +134,13 @@ export const iterationStep = new Step({
     ${comment}
         `,
           {
-            output: z.object({
-              URL: z.string().optional().describe('調査されたURL'),
-              アクセスランキングの有無: z.enum(['有り', '無し']),
-              アクセスランキングの名称: z.string().optional().describe('アクセスランキングの名称'),
-            }),
+            structuredOutput: {
+              schema: z.object({
+                URL: z.string().optional().describe('調査されたURL'),
+                アクセスランキングの有無: z.enum(['有り', '無し']),
+                アクセスランキングの名称: z.string().optional().describe('アクセスランキングの名称'),
+              }),
+            },
           }
         )
 
@@ -150,13 +157,18 @@ export const iterationStep = new Step({
     } finally {
       await iterationLock.release()
     }
+
+    return {}
   },
 })
 
 // バッチ処理のワークフロー
-export const batchWorkflow = new Workflow({
-  name: 'Batch Workflow',
+export const batchWorkflow = createWorkflow({
+  id: 'batch-workflow',
+  description: 'Batch Workflow',
+  inputSchema: z.object({}),
+  outputSchema: z.object({}),
 })
-  .step(loadBacklogStep) // 残タスクを読み込む
-  .while(async () => documents.hasBacklog(), iterationStep) // 残タスクがある間、繰り返し調査を行う
+  .then(loadBacklogStep) // 残タスクを読み込む
+  .dowhile(iterationStep, async () => documents.hasBacklog()) // 残タスクがある間、繰り返し調査を行う
   .commit()

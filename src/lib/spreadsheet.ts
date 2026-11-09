@@ -153,7 +153,7 @@ export function useSpreadSheetAsDocuments<T extends z.ZodRawShape>(
     if (!validation.success) {
       throw new Error(`スキーマに適合しません: ${validation.error.message}: ${JSON.stringify(data)}`)
     }
-    const row = await sheet.addRow(data)
+    const row = await sheet.addRow(data as Parameters<typeof sheet.addRow>[0])
 
     return {
       rowKey: row.rowNumber,

@@ -1,8 +1,8 @@
-import { MCPConfiguration } from '@mastra/mcp'
+import { MCPClient } from '@mastra/mcp'
 
 // ブラウザ操作・Web検索のためのMCPサーバー
 
-export const webMcp = new MCPConfiguration({
+export const webMcp = new MCPClient({
   id: 'web-mcp',
   servers: {
     playwright: {
