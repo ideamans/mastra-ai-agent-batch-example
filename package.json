@@ -4,25 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "mastra dev",
-    "headers": "tsx src/commands/headers.ts"
+    "headers": "tsx src/commands/headers.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "mastra build",
+    "test": "pnpm typecheck && pnpm build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@mastra/core": "^1.79.0",
-    "@mastra/mcp": "^2.5.0",
+    "@mastra/core": "^1.82.0",
+    "@mastra/mcp": "^2.8.0",
     "async-await-mutex-lock": "^1.0.12",
-    "google-auth-library": "^11.3.1",
+    "google-auth-library": "^11.3.3",
     "google-spreadsheet": "^5.3.0",
-    "mastra": "^1.35.0",
+    "mastra": "^1.38.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
@@ -31,11 +33,13 @@
     "semi": false,
     "printWidth": 120
   },
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=22.13"
+  },
   "pnpm": {
-    "overrides": {
-      "@modelcontextprotocol/client": "^2.4.0",
-      "@modelcontextprotocol/core": "^2.4.0",
-      "@modelcontextprotocol/server": "^2.4.0"
-    }
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

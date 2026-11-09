@@ -1,5 +1,5 @@
 import { Agent } from '@mastra/core/agent'
-import { gemini20flash } from './models'
+import { geminiFlash } from './models'
 import { webMcp } from '../tools/web'
 
 // サイト調査エージェント
@@ -11,7 +11,7 @@ export const webMcpTools = await webMcp.listTools()
 export const surveyAgent = new Agent({
   id: 'surveyAgent',
   name: 'サイト調査エージェント',
-  model: gemini20flash,
+  model: geminiFlash,
   instructions: `
 あなたはWebサイトの調査員です。以下の調査をステップバイステップで説明しながら進めてください。
 
